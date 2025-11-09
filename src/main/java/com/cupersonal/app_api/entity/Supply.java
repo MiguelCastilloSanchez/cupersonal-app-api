@@ -1,9 +1,12 @@
 package com.cupersonal.app_api.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.cupersonal.app_api.enums.Unit;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +14,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -18,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 @Entity
 @Table(name = "supplies")
@@ -48,6 +53,10 @@ public class Supply {
 
     @Column(name = "updated_at", nullable = true)
     private LocalDateTime updatedAt;
+
+    @Default
+    @OneToMany(mappedBy = "supply", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ProductSupply> productSupplies = new HashSet<>();
 
     @PrePersist
     public void onCreate() {
