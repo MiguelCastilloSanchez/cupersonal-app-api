@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 public record CreateSupplyDTO( 
     @NotBlank
-    @Size(min = 2, max = 30)
+    @Size(min = 2, max = 50)
     String name,
 
     @NotNull

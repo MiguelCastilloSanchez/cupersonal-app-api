@@ -1,13 +1,10 @@
 package com.cupersonal.app_api.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
-import com.cupersonal.app_api.enums.Unit;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,12 +17,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "supplies")
+@Table(name = "products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Supply {
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,15 +30,14 @@ public class Supply {
     @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "unit", nullable = false)
-    private Unit unit;
+    @Column(name = "description", nullable = false, length = 1000)
+    private String description;
 
-    @Column(name = "quantity", nullable = false)
-    private int quantity;
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
 
-    @Column(name = "minimum_quantity", nullable = false)
-    private int minimumQuantity;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

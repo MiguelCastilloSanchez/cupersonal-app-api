@@ -18,7 +18,7 @@ public class SupplyController {
     @Autowired
     private SupplyService supplyService;
 
-    @PostMapping(value="/supply")
+    @PostMapping(value="/supplies")
     @ResponseStatus(HttpStatus.OK)
     public Supply createSupply(@Valid @RequestBody CreateSupplyDTO dto){
         return supplyService.createSupply(dto);
