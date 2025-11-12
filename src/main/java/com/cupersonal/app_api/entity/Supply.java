@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.cupersonal.app_api.enums.Unit;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,6 +56,7 @@ public class Supply {
     private LocalDateTime updatedAt;
 
     @Default
+    @JsonManagedReference
     @OneToMany(mappedBy = "supply", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProductSupply> productSupplies = new HashSet<>();
 
