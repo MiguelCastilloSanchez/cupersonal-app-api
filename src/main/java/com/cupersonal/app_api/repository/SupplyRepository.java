@@ -7,5 +7,5 @@ import com.cupersonal.app_api.entity.Supply;
 
 @Repository
 public interface SupplyRepository extends JpaRepository<Supply,Long>{
-    
+
 }
