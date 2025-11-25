@@ -1,11 +1,17 @@
 package com.cupersonal.app_api.service;
 
-import javax.swing.text.html.parser.Entity;
+import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cupersonal.app_api.dto.request.CreateSupplyDTO;
+import com.cupersonal.app_api.dto.response.ProductResponseDTO;
+import com.cupersonal.app_api.dto.response.SupplyResponseDTO;
+import com.cupersonal.app_api.dto.update.UpdateSupplyDTO;
 import com.cupersonal.app_api.entity.Supply;
 import com.cupersonal.app_api.repository.SupplyRepository;
 
@@ -26,7 +32,31 @@ public class SupplyService {
         return supplyRepository.save(supply);
     }
 
+    public Page<SupplyResponseDTO> findAllSupplies(Pageable pageable){
+        return this.supplyRepository.findAll(pageable)
+            .map(supply -> new SupplyResponseDTO(
+                supply.getId(),
+                supply.getName(),
+                supply.getUnit(),
+                supply.getQuantity(),
+                supply.getMinimumQuantity()
+            ));
+    }
+
     public Supply findSupplyById(int id) throws EntityNotFoundException{
         return this.supplyRepository.findById(Long.valueOf(id)).orElseThrow(EntityNotFoundException::new);
+    }
+
+    public Supply updateSupply(int id, UpdateSupplyDTO dto){
+        Supply supplyToUpdate = findSupplyById(id);
+        supplyToUpdate.setName(dto.name());
+        supplyToUpdate.setUnit(dto.unit());
+        supplyToUpdate.setQuantity(dto.quantity());
+        supplyToUpdate.setMinimumQuantity(dto.minimumQuantity());
+        return supplyRepository.save(supplyToUpdate);
+    }
+
+    public void deleteSupplyById(int id){
+        this.supplyRepository.deleteById(Long.valueOf(id));
     }
 }
