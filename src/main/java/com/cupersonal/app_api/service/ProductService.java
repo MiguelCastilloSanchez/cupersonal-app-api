@@ -14,6 +14,7 @@ import com.cupersonal.app_api.dto.response.ProductResponseDTO;
 import com.cupersonal.app_api.dto.update.UpdateProductDTO;
 import com.cupersonal.app_api.entity.Product;
 import com.cupersonal.app_api.entity.ProductSupply;
+import com.cupersonal.app_api.entity.ProductSupplyId;
 import com.cupersonal.app_api.entity.Supply;
 import com.cupersonal.app_api.repository.ProductRepository;
 import com.cupersonal.app_api.repository.SupplyRepository;
@@ -29,7 +30,6 @@ public class ProductService {
     @Autowired
     private SupplyRepository supplyRepository;
 
-
     public Product createProduct(CreateProductDTO dto){
         Product product = Product.builder()
        .name(dto.name())
@@ -37,27 +37,32 @@ public class ProductService {
        .price((dto.price()))
        .imageUrl(dto.imageUrl())
        .build();
+
+       product = productRepository.save(product);
        return productRepository.save(createProductSupply(product, dto));
     }
 
     private Product createProductSupply(Product product, CreateProductDTO dto){
         Set<ProductSupply> productSupplies = dto.supplies().stream()
-        .map(s -> {
-            Supply supply = supplyRepository.findById(s.id())
-                .orElseThrow(() -> new RuntimeException("Supply not found: " + s.id()));
+            .map(s -> {
+                Supply supply = supplyRepository.findById(s.id())
+                    .orElseThrow(() -> new RuntimeException("Supply not found: " + s.id()));
 
-            ProductSupply ps = new ProductSupply();
-            ps.setProduct(product);
-            ps.setSupply(supply);
-            ps.setQuantityPerUnit(s.quantityPerUnit());
+                ProductSupply ps = new ProductSupply();
+                ps.setId(new ProductSupplyId(product.getId(), supply.getId()));
+                ps.setProduct(product);
+                ps.setSupply(supply);
+                ps.setQuantityPerUnit(s.quantityPerUnit());
+                return ps;
+            })
+            .collect(Collectors.toSet());
 
-            return ps;
-        })
-        .collect(Collectors.toSet());
-        product.setProductSupplies(productSupplies);
-        System.err.println(product.getId());
+        product.getProductSupplies().addAll(productSupplies);
         return product;
     }
+
+
+
 
     public Page<ProductResponseDTO> findAllProducts(Pageable pageable){
         return this.productRepository.findAll(pageable)
@@ -95,4 +100,10 @@ public class ProductService {
     public void deleteProductById(int id){
         this.productRepository.deleteById(Long.valueOf(id));
     }
+
+
+
+
+
+
 }
