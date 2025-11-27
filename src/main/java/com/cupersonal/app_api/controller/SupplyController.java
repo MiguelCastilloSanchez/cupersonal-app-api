@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cupersonal.app_api.dto.request.CreateSupplyDTO;
-import com.cupersonal.app_api.dto.response.ProductResponseDTO;
 import com.cupersonal.app_api.dto.response.SupplyResponseDTO;
 import com.cupersonal.app_api.dto.update.UpdateSupplyDTO;
 import com.cupersonal.app_api.entity.Supply;

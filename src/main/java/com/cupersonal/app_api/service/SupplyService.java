@@ -1,6 +1,5 @@
 package com.cupersonal.app_api.service;
 
-import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.cupersonal.app_api.dto.request.CreateSupplyDTO;
-import com.cupersonal.app_api.dto.response.ProductResponseDTO;
 import com.cupersonal.app_api.dto.response.SupplyResponseDTO;
 import com.cupersonal.app_api.dto.update.UpdateSupplyDTO;
 import com.cupersonal.app_api.entity.Supply;
