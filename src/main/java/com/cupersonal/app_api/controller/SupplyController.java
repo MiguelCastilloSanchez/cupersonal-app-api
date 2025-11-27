@@ -45,10 +45,10 @@ public class SupplyController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<SupplyResponseDTO>> findAllSupplies( 
+    public ResponseEntity<Page<SupplyResponseDTO>> findAllSupplies( 
         @PageableDefault(size = 5, sort = "id") Pageable pageable){
         Page<SupplyResponseDTO> supplies = this.supplyService.findAllSupplies(pageable);
-        return ResponseEntity.ok(supplies.getContent());
+        return ResponseEntity.ok(supplies);
     }
     
 
