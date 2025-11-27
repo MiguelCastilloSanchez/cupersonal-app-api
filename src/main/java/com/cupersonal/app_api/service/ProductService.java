@@ -2,9 +2,6 @@ package com.cupersonal.app_api.service;
 
 import java.util.stream.Collectors;
 
-import javax.swing.text.html.parser.Entity;
-
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -19,7 +16,6 @@ import com.cupersonal.app_api.entity.Product;
 import com.cupersonal.app_api.entity.ProductSupply;
 import com.cupersonal.app_api.entity.Supply;
 import com.cupersonal.app_api.repository.ProductRepository;
-import com.cupersonal.app_api.repository.ProductSupplyRepository;
 import com.cupersonal.app_api.repository.SupplyRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -33,8 +29,6 @@ public class ProductService {
     @Autowired
     private SupplyRepository supplyRepository;
 
-    @Autowired 
-    private ProductSupplyRepository productSupplyRepository;
 
     public Product createProduct(CreateProductDTO dto){
         Product product = Product.builder()
@@ -43,7 +37,6 @@ public class ProductService {
        .price((dto.price()))
        .imageUrl(dto.imageUrl())
        .build();
-        
        return productRepository.save(createProductSupply(product, dto));
     }
 
@@ -62,6 +55,7 @@ public class ProductService {
         })
         .collect(Collectors.toSet());
         product.setProductSupplies(productSupplies);
+        System.err.println(product.getId());
         return product;
     }
 
@@ -79,40 +73,24 @@ public class ProductService {
     public ProductResponseDTO findProductById(int id) throws EntityNotFoundException{
         Product product = productRepository.findById(Long.valueOf(id)).orElseThrow(EntityNotFoundException::new);
 
-        return new ProductResponseDTO(Long.valueOf(id), product.getName(), product.getDescription(), product.getPrice(), product.getImageUrl());
+        return new ProductResponseDTO(
+            Long.valueOf(id), 
+            product.getName(), 
+            product.getDescription(), 
+            product.getPrice(), 
+            product.getImageUrl()
+        );
     }
 
     public Product findProductAdminById(int id) throws EntityNotFoundException{
         return this.productRepository.findById(Long.valueOf(id)).orElseThrow(EntityNotFoundException::new);
     }
 
-    /*public Product updateProduct(int id, UpdateProductDTO dto){
+    public Product updateProduct(int id, UpdateProductDTO dto) throws EntityNotFoundException{
         Product product = this.productRepository.findById(Long.valueOf(id)).orElseThrow(EntityNotFoundException::new);
-        product.setName(dto.name());
-        product.setDescription(dto.description());
         product.setPrice(dto.price());
-        product.setImageUrl(dto.imageUrl());
-        product.getProductSupplies().clear();
-        return productRepository.save(updateProductSupplies(product, dto));
+        return productRepository.save(product);
     }
-
-    private Product updateProductSupplies (Product product, UpdateProductDTO dto){
-        Set<ProductSupply> productSupplies = dto.supplies().stream()
-.map(s -> {
-            Supply supply = supplyRepository.findById(s.id())
-                .orElseThrow(() -> new RuntimeException("Supply not found: " + s.id()));
-
-            ProductSupply ps = new ProductSupply();
-            ps.setProduct(product);
-            ps.setSupply(supply);
-            ps.setQuantityPerUnit(s.quantityPerUnit());
-
-            return ps;
-        })
-        .collect(Collectors.toSet());
-        product.setProductSupplies(productSupplies);
-        return product;
-    }*/
 
     public void deleteProductById(int id){
         this.productRepository.deleteById(Long.valueOf(id));

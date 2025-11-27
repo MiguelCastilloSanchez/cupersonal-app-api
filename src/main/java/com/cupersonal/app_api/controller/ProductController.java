@@ -1,7 +1,6 @@
 package com.cupersonal.app_api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,10 +27,9 @@ import com.cupersonal.app_api.service.ProductService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
-import java.math.BigDecimal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -69,15 +67,14 @@ public class ProductController {
     }
     
 
-    /*@PutMapping("/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable int id, @Valid @RequestBody UpdateProductDTO dto) throws EntityNotFoundException{
         Product product = this.productService.updateProduct(id, dto);
-        
         return new ResponseEntity<Product>(product, HttpStatus.OK);
-    }*/
+    }
 
     
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProduct(@PathVariable int id) throws EntityNotFoundException{
         productService.deleteProductById(id);
