@@ -36,6 +36,7 @@ public class OrderService {
     public Order createOrder(CreateOrderDTO dto){
         Order order = Order.builder()
         .code(this.generateOrderCode())
+        .email(dto.email())
         .build();
         return orderRepository.save(createOrderProduct(order, dto));
     }
@@ -102,6 +103,7 @@ public class OrderService {
             order.getCode(),
             order.getTotal(),
             order.getStatus().name(),
+            order.getEmail(),
             productDTOs
         );
     }
