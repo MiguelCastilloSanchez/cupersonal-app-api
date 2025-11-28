@@ -20,6 +20,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -53,6 +54,10 @@ public class Order{
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
+
+    @Column(name = "client_email", nullable = false)
+    @Email
+    private String email;
 
     @Default
     @ToString.Exclude

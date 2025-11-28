@@ -8,6 +8,7 @@ public record OrderResponseDTO(
     String code,
     BigDecimal total,
     String status,
+    String email,
     List<OrderProductResponseDTO> products
 
 ) {
