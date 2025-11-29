@@ -28,10 +28,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
         try {
-            // *** TOKEN RECUPERADO DESDE COOKIE O HEADER ***
             String token = recoverToken(request);
 
             if (token != null) {
@@ -39,17 +39,13 @@ public class SecurityFilter extends OncePerRequestFilter {
 
                 if (subject != null) {
                     UserDetails user = userRepository.findByEmail(subject);
-                    var authentication = new UsernamePasswordAuthenticationToken(
+
+                    var auth = new UsernamePasswordAuthenticationToken(
                             user,
                             null,
-                            user.getAuthorities()
-                    );
+                            user.getAuthorities());
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
+                    SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }
 
