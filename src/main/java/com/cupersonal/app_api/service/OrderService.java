@@ -26,11 +26,18 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class OrderService {
+
+    private final EmailService emailService;
     @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private ProductRepository productRepository;
+
+
+    OrderService(EmailService emailService) {
+        this.emailService = emailService;
+    }
 
 
     public Order createOrder(CreateOrderDTO dto){
@@ -55,14 +62,22 @@ public class OrderService {
             op.setUnitPrice(product.getPrice());
             op.setProductName(product.getName());
             op.setProductImageUrl(product.getImageUrl());
-
             return op;
         })
         .collect(Collectors.toSet());
         order.setOrderProducts(orderProducts);
         order.setTotal(this.calculateTotal(order));
+
+        this.sendEmail(order);
         return order;
     }
+
+    private void sendEmail(Order order){
+        String email = order.getEmail();
+        emailService.sendOrderStatus(email, "Confirmación de orden", "Su orden con código " + order.getCode() + "se actualizó a estado " + order.getStatus());
+    }
+
+
 
     private String generateOrderCode(){
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -114,6 +129,7 @@ public class OrderService {
     public Order updateOrder(String code, UpdateOrderDTO dto) throws EntityNotFoundException{
         Order order = this.orderRepository.findByCode(code).orElseThrow(EntityNotFoundException::new);
         order.setStatus(OrderStatus.valueOf(dto.status()));
+        this.sendEmail(order);
         return orderRepository.save(order);
     }
 
