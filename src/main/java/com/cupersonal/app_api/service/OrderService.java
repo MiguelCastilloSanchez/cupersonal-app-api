@@ -32,13 +32,20 @@ public class OrderService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private EmailService emailService;
 
     public Order createOrder(CreateOrderDTO dto){
         Order order = Order.builder()
         .code(this.generateOrderCode())
         .email(dto.email())
         .build();
-        return orderRepository.save(createOrderProduct(order, dto));
+
+        Order orderCreated = orderRepository.save(createOrderProduct(order, dto));
+
+        sendOrderEmail(orderCreated);
+
+        return orderCreated;
     }
 
     private Order createOrderProduct(Order order, CreateOrderDTO dto){
@@ -114,7 +121,11 @@ public class OrderService {
     public Order updateOrder(String code, UpdateOrderDTO dto) throws EntityNotFoundException{
         Order order = this.orderRepository.findByCode(code).orElseThrow(EntityNotFoundException::new);
         order.setStatus(OrderStatus.valueOf(dto.status()));
-        return orderRepository.save(order);
+        Order orderUpdated = orderRepository.save(order);
+
+        sendStatusChangeEmail(orderUpdated);
+
+        return orderUpdated;
     }
 
     @Transactional
@@ -122,9 +133,58 @@ public class OrderService {
         this.orderRepository.deleteByCode(code);
     }
 
+    public void sendOrderEmail(Order order) {
+        String subject = "Tu orden ha sido creada: " + order.getCode();
 
+        String html = """
+                <html>
+                    <body style="font-family: Arial, sans-serif;">
+                        <h2>¡Gracias por tu compra!</h2>
+                        <p>Tu orden ha sido generada exitosamente.</p>
 
+                        <h3>Detalles de tu orden:</h3>
+                        <p><strong>Código:</strong> %s</p>
+                        <p><strong>Estado:</strong> %s</p>
 
+                        <hr/>
+                        <p>Nos pondremos en contacto contigo cuando tu orden cambie de estado.</p>
+                    </body>
+                </html>
+                """.formatted(order.getCode(), order.getStatus().name());
+
+        try {
+            emailService.sendVerificationEmail(order.getEmail(), subject, html);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendStatusChangeEmail(Order order) {
+
+        String subject = "Actualización de estado de tu orden: " + order.getCode();
+
+        String html = """
+            <html>
+                <body style="font-family: Arial, sans-serif;">
+                    <h2>Actualización de tu orden</h2>
+                    <p>Tu orden ha cambiado de estado.</p>
+
+                    <h3>Detalles de tu orden:</h3>
+                    <p><strong>Código:</strong> %s</p>
+                    <p><strong>Nuevo estado:</strong> %s</p>
+
+                    <hr/>
+                    <p>Gracias por confiar en nosotros.</p>
+                </body>
+            </html>
+            """.formatted(order.getCode(), order.getStatus().name());
+
+        try {
+            emailService.sendVerificationEmail(order.getEmail(), subject, html);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }

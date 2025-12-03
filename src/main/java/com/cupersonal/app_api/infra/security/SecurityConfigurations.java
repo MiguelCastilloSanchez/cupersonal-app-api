@@ -46,6 +46,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.PUT, "/supplies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/orders/test").permitAll()
                         .requestMatchers(HttpMethod.GET, "/orders/{code}").permitAll()
                         .anyRequest().authenticated())
                 .build();
